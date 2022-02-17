@@ -25,10 +25,10 @@ type API interface {
 
 // Client makes calls to the PowerVS API.
 type Client struct {
+	ApiKey         string
 	managementAPI *resourcemanagerv2.ResourceManagerV2
 	controllerAPI *resourcecontrollerv2.ResourceControllerV2
 	vpcAPI        *vpcv1.VpcV1
-	Authenticator *core.IamAuthenticator
 }
 
 // cisServiceID is the Cloud Internet Services' catalog service ID.
@@ -57,12 +57,8 @@ type DNSZoneResponse struct {
 // NewClient initializes a client with a session.
 func NewClient() (*Client, error) {
 	apiKey := os.Getenv("IC_API_KEY")
-	authenticator := &core.IamAuthenticator{
-		ApiKey: apiKey,
-	}
-
 	client := &Client{
-		Authenticator: authenticator,
+		ApiKey: apiKey,
 	}
 
 	if err := client.loadSDKServices(); err != nil {
@@ -122,8 +118,11 @@ func (c *Client) GetDNSZones(ctx context.Context) ([]DNSZoneResponse, error) {
 	var allZones []DNSZoneResponse
 	for _, instance := range listResourceInstancesResponse.Resources {
 		crnstr := instance.CRN
+		authenticator := &core.IamAuthenticator{
+				ApiKey: c.ApiKey,
+		}
 		zonesService, err := zonesv1.NewZonesV1(&zonesv1.ZonesV1Options{
-			Authenticator: c.Authenticator,
+			Authenticator: authenticator,
 			Crn:           crnstr,
 		})
 		if err != nil {
@@ -155,8 +154,11 @@ func (c *Client) GetDNSZones(ctx context.Context) ([]DNSZoneResponse, error) {
 }
 
 func (c *Client) loadResourceManagementAPI() error {
+	authenticator := &core.IamAuthenticator{
+		ApiKey: c.ApiKey,
+	}
 	options := &resourcemanagerv2.ResourceManagerV2Options{
-		Authenticator: c.Authenticator,
+		Authenticator: authenticator,
 	}
 	resourceManagerV2Service, err := resourcemanagerv2.NewResourceManagerV2(options)
 	if err != nil {
@@ -167,8 +169,11 @@ func (c *Client) loadResourceManagementAPI() error {
 }
 
 func (c *Client) loadResourceControllerAPI() error {
+	authenticator := &core.IamAuthenticator{
+		ApiKey: c.ApiKey,
+	}
 	options := &resourcecontrollerv2.ResourceControllerV2Options{
-		Authenticator: c.Authenticator,
+		Authenticator: authenticator,
 	}
 	resourceControllerV2Service, err := resourcecontrollerv2.NewResourceControllerV2(options)
 	if err != nil {
@@ -179,8 +184,11 @@ func (c *Client) loadResourceControllerAPI() error {
 }
 
 func (c *Client) loadVPCV1API() error {
+	authenticator := &core.IamAuthenticator{
+		ApiKey: c.ApiKey,
+	}
 	vpcService, err := vpcv1.NewVpcV1(&vpcv1.VpcV1Options{
-		Authenticator: c.Authenticator,
+		Authenticator: authenticator,
 	})
 	if err != nil {
 		return err
