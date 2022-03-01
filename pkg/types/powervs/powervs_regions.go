@@ -1,5 +1,9 @@
 package powervs
 
+import (
+	"fmt"
+)
+
 // Since there is no API to query these, we have to hard-code them here.
 
 // Region describes resources associated with a region in Power VS.
@@ -64,4 +68,16 @@ var Regions = map[string]Region{
 		VPCRegion:   "us-east",
 		Zones:       []string{"us-east"},
 	},
+}
+
+// VPCRegionForRegion returns the VPC region for the specified region.
+func VPCRegionForRegion(region string) (string, error) {
+	var r Region
+	var ok bool
+
+	if r, ok = Regions[region]; ok {
+		return r.VPCRegion, nil
+	}
+
+	return "", fmt.Errorf("region %s not found in Regions", region)
 }
