@@ -55,7 +55,7 @@ type DNSZoneResponse struct {
 
 // NewClient initializes a client with a session.
 func NewClient() (*Client, error) {
-	apiKey := os.Getenv("IC_API_KEY")
+	apiKey := os.Getenv("IBMCLOUD_API_KEY")
 	client := &Client{
 		APIKey: apiKey,
 	}

@@ -14,8 +14,10 @@ func Metadata(config *types.InstallConfig, meta *icpowervs.Metadata) *powervs.Me
 	cisCRN, _ := meta.CISInstanceCRN(context.TODO())
 
 	return &powervs.Metadata{
+		BaseDomain:     config.BaseDomain,
 		CISInstanceCRN: cisCRN,
 		Region:         config.Platform.PowerVS.Region,
+		VPCRegion:      config.Platform.PowerVS.VPCRegion,
 		Zone:           config.Platform.PowerVS.Zone,
 	}
 }
